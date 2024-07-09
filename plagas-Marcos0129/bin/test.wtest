@@ -1,0 +1,132 @@
+import plagas.*
+import elementos.*
+import barrios.*
+
+describe "elementos y barrio"{
+	
+	const hogar1= new Hogar(nivelDeMugre = 10, nivelDeConfort = 20)	//Bueno
+	const hogar2= new Hogar(nivelDeMugre = 20, nivelDeConfort = 9)//No bueno
+	const hogar3= new Hogar(nivelDeMugre = 50, nivelDeConfort = 50)//Bueno
+	const huerta1= new Huerta(capacidadDeProduccion = 25) //Bueno
+	const huerta2= new Huerta(capacidadDeProduccion = 3) //No bueno
+	const mascota1= new Mascota(nivelDeSalud = 300) //Bueno
+	const mascota2= new Mascota(nivelDeSalud = 50) //No bueno
+	
+	const barrio1= new Barrio (elementos=#{hogar1, hogar2,hogar3, huerta1 ,huerta2, mascota1, mascota2})
+	const barrio2= new Barrio (elementos=#{hogar2,huerta2, mascota1, mascota2})
+	
+	const cucaracha1= new Cucaracha(pesoPromedio = 8, poblacion = 30)
+	const cucaracha2= new Cucaracha(pesoPromedio = 12, poblacion = 16)
+	const pulga1= new Pulga(poblacion = 15)
+	const pulga2= new Pulga(poblacion = 5)
+	const garrapata1= new Garrapata(pesoPromedio = 5, poblacion = 15)
+	const garrapata2= new Garrapata(pesoPromedio = 5, poblacion = 100)
+	const mosquito1= new Mosquito(poblacion = 30)
+	const mosquito2= new Mosquito(poblacion = 29)
+	const cucaracha3= new Cucaracha(pesoPromedio = 15, poblacion = 160)
+	const cucaracha4= new Cucaracha(pesoPromedio = 5, poblacion = 160)
+	
+	
+	test "hogar1 es bueno"{
+		assert.that(hogar1.esBueno())
+	}
+	
+	test "hogar2 no es bueno"{
+		assert.notThat(hogar2.esBueno())
+	}
+	
+	test "huerta1 es buena"{
+		assert.that(huerta1.esBueno())
+	}
+	
+	test "huerta2 no es buena"{
+		assert.notThat(huerta2.esBueno())
+	}
+	
+	test "mascota1 es buena"{
+		assert.that(mascota1.esBueno())
+	}
+	
+	test "mascota2 no es buena"{
+		assert.notThat(mascota2.esBueno())
+	}
+	
+	test "barrio1 es copado"{
+		assert.that(barrio1.esCopado()) //5 buenos, 3 no buenos
+	}
+	
+	test "barrio2 no es copado"{
+		assert.notThat(barrio2.esCopado()) //3 no buenos, 1 bueno
+	}
+	
+	test "Plaga de cucarachas1, danio y no transmite"{
+		assert.equals(15,cucaracha1.nivelDeDanio())
+		assert.notThat(cucaracha1.transmiteEnfermedad())
+	}
+	
+	test "Plaga de cucarachas2, danio y si transmite"{
+		assert.equals(8,cucaracha2.nivelDeDanio())
+		assert.that(cucaracha2.transmiteEnfermedad())
+	}
+	
+	test "Plaga de pulga1, danio y si transmite"{
+		assert.equals(30,pulga1.nivelDeDanio())
+		assert.that(pulga1.transmiteEnfermedad())
+	}
+	
+	test "Plaga de pulga2, danio y no transmite"{
+		assert.equals(10,pulga2.nivelDeDanio())
+		assert.notThat(pulga2.transmiteEnfermedad())
+	}
+
+	test "Plaga de garrapata1, danio y si transmite"{
+		assert.equals(30,garrapata1.nivelDeDanio())
+		assert.notThat(garrapata1.transmiteEnfermedad())
+	}
+
+	test "Plaga de mosquito1, danio y no transmite"{
+		assert.equals(30,mosquito1.nivelDeDanio())
+		assert.that(mosquito1.transmiteEnfermedad())
+	}
+	
+	test "Plaga de mosquito2, danio y no transmite"{
+		assert.equals(29,mosquito2.nivelDeDanio())
+		assert.notThat(mosquito2.transmiteEnfermedad())
+	}
+
+	test "Hogar1 recibe ataque de mosquito1"{
+		hogar1.recibirAtaqueDe(mosquito1)
+		assert.equals(10+30,hogar1.nivelDeMugre())
+	}
+	
+	test "Huerta1 recibe ataque de cucaracha3 que si tramsmite enfermedad"{
+		huerta1.recibirAtaqueDe(cucaracha3)
+		assert.equals(25-18,huerta1.capacidadDeProduccion())
+	}
+	
+	test "Huerta1 recibe ataque de cucaracha4 que no tramsmite enfermedad"{
+		huerta1.recibirAtaqueDe(cucaracha4)
+		assert.equals(25-8,huerta1.capacidadDeProduccion())
+	}
+	
+	test "Mascota1 recibe un ataque de pulga1"{
+		mascota1.recibirAtaqueDe(pulga1)
+		assert.equals(300-30, mascota1.nivelDeSalud())
+	}
+	
+	test "Mascota1 recibe un ataque de pulga2 pero no le pasa nada"{
+		mascota1.recibirAtaqueDe(pulga2)
+		assert.equals(300, mascota1.nivelDeSalud())
+	}
+
+	test "Despues de atacar a hogar3, cucaracha1 aumento su poblacion y su peso"{
+		hogar3.recibirAtaqueDe(cucaracha1)
+		assert.equals(33,cucaracha1.poblacion())
+		assert.equals(10,cucaracha1.pesoPromedio())
+	}
+	
+	test "Despues de atacar huerta1,garrapata2 aumenta su poblacion"{
+		huerta1.recibirAtaqueDe(garrapata2)
+		assert.equals(120,garrapata2.poblacion())
+	}
+}
